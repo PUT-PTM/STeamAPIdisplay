@@ -1,22 +1,8 @@
 package lolAPI;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.net.*;
+import java.io.*;
+import java.util.*;
 import org.json.*;
 
 
@@ -31,7 +17,7 @@ public class lolServerConnector {
 	 * funkcja znajduje ID gracza na podstawie nicku
 	 */
 	
-	public static Player findUserID(String APIkey) throws MalformedURLException, IOException{
+	public static Player findUserID(String APIkey) throws MalformedURLException, IOException, JSONException{
 		
 						String serverLink = "https://eune.api.pvp.net/api/lol/eune/v1.4/summoner/by-name/"; 
 						String playerNickname;
@@ -74,11 +60,11 @@ public class lolServerConnector {
 	
 	
 	/*
-	 * zapytanie do API o czêœæ, która ma siê pojawiæ na wyœwietlaczu -
+	 * zapytanie do API o czÄ™Å›Ä‡, ktÃ³ra ma siÄ™ pojawiÄ‡ na wyÅ›wietlaczu -
 	 * tworzy dane [ nick gracza - dywizja ]
 	 */
 	
-	public static String findUserDetailsByID(int ID, String nick, String APIkey) throws MalformedURLException, IOException{
+	public static String findUserDetailsByID(int ID, String nick, String APIkey) throws MalformedURLException, IOException, JSONException{
 		
 		
 		String serverLink = "https://eune.api.pvp.net/api/lol/eune/v2.5/league/by-summoner/"; 
@@ -133,12 +119,12 @@ public class lolServerConnector {
 	
 	
 	/*
-	 * zapytanie, które znajduje inforamacje o wszystkich graczach, którzy s¹ aktualnie w danej grze
-	 * tworzy listê Team: 2 dru¿yny 5-osobowe
+	 * zapytanie, ktÃ³re znajduje inforamacje o wszystkich graczach, ktÃ³rzy sÄ… aktualnie w danej grze
+	 * tworzy listÄ™ Team: 2 druÅ¼yny 5-osobowe
 	 */
 	
 	
-	public static ArrayList<Team> findCurrentGameDetails(int playerID, String APIkey) throws MalformedURLException, IOException{
+	public static ArrayList<Team> findCurrentGameDetails(int playerID, String APIkey) throws MalformedURLException, IOException, JSONException{
 		String server = "EUN1";
 		String serverLink = "https://eune.api.pvp.net/observer-mode/rest/consumer/getSpectatorGameInfo/"; 
 		String charset = "UTF-8";  
@@ -210,21 +196,21 @@ public class lolServerConnector {
 	
 	
 	/*
-	 * Funkcja, która przetwarza dane uzyskane poprzez findCurrentGameDetails().
-	 * Ka¿dy gracz na liœcie jest sprawdzany przez funkcjê findUserDetailsByID().
+	 * Funkcja, ktÃ³ra przetwarza dane uzyskane poprzez findCurrentGameDetails().
+	 * KaÅ¼dy gracz na liÅ›cie jest sprawdzany przez funkcjÄ™ findUserDetailsByID().
 	 * Uzyskujemy dane [ nick gracza - dywizja ] dla wszystkich 10 graczy w grze.
 	 * Dane wyprowadzamy do pliku. 
-	 * TODO : STM - czytanie z utworzonych plików
+	 * TODO : STM - czytanie z utworzonych plikÃ³w
 	 */
 	
-	public static void findPlayersInGameDetails(ArrayList<Team> teams, String key1, String key2) throws MalformedURLException, IOException{
+	public static void findPlayersInGameDetails(ArrayList<Team> teams, String key1, String key2) throws MalformedURLException, IOException, JSONException{
 	
 		int iterator = 0;
 		String key = key1;
 		
 
 		/* TODO: 
-		 * zmiana œcie¿ek - dopasowanie do katalogów projektu, a nie lokalnego komputera
+		 * zmiana Å›cieÅ¼ek - dopasowanie do katalogÃ³w projektu, a nie lokalnego komputera
 		 *  
 		 */
 		
@@ -267,7 +253,7 @@ public class lolServerConnector {
 	
 	
 	
-	public static void main(String[] args) throws MalformedURLException, IOException   {
+	public static void main(String[] args) throws MalformedURLException, IOException, JSONException   {
 
 		Player player;
 		ArrayList<Team> teams = new ArrayList<Team>();
@@ -276,10 +262,7 @@ public class lolServerConnector {
 		String key2 = "";		
 		
 		
-		/* TODO: 
-		 * zmiana œcie¿ek - dopasowanie do katalogów projektu, a nie lokalnego komputera
-		 *  
-		 */
+
 		
 		File conf1 = new File("C:/Users/Erwin/Desktop/webAPI/data/key1.conf");
 		File conf2 = new File("C:/Users/Erwin/Desktop/webAPI/data/key2.conf");
@@ -312,7 +295,7 @@ public class lolServerConnector {
 							
 							
 							
-							/* 		id -  49950320  - do testów		 	*/						
+							/* 		id -  49950320  - do testÃ³w		 	*/						
 							
 					
 							
