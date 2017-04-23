@@ -5,7 +5,6 @@ public class ProtocolImpl implements Protocol {
     int tail = 0;  
       
     public void onReceive(byte b) {  
-        // simple protocol: each message ends with new line  
         if (b=='\n') {  
             onMessage();  
         } else {  
@@ -18,17 +17,12 @@ public class ProtocolImpl implements Protocol {
         onMessage();  
     }  
       
-    /* 
-     * When message is recognized onMessage is invoked  
-     */  
+
     private void onMessage() {  
         if (tail!=0) {  
-            // constructing message  
             String message = getMessage(buffer, tail);  
             System.out.println("RECEIVED MESSAGE: " + message);  
               
-            // this logic should be placed in some kind of   
-            // message interpreter class not here  
             if ("HELO".equals(message)) {  
                 CommPortSender.send(getMessage("OK"));  
             } else if ("OK".equals(message)) {  
@@ -38,7 +32,6 @@ public class ProtocolImpl implements Protocol {
         }  
     }  
       
-    // helper methods   
     public byte[] getMessage(String message) {  
         return (message+"\n").getBytes();  
     }  

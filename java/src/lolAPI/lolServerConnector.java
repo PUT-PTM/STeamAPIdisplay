@@ -1,6 +1,8 @@
 package lolAPI;
 
+import java.io.*;
 import java.net.*;
+import java.nio.file.*;
 import java.io.*;
 import java.util.*;
 import org.json.*;
@@ -108,9 +110,7 @@ public class lolServerConnector {
 			   }
 		
 		}
-		
-		// NICK RETURN ADDED JUST FOR TESTS !
-		
+				
 		  return nick +" " + tier +" "+ division;			
 	}
 						
@@ -200,7 +200,6 @@ public class lolServerConnector {
 	 * Każdy gracz na liście jest sprawdzany przez funkcję findUserDetailsByID().
 	 * Uzyskujemy dane [ nick gracza - dywizja ] dla wszystkich 10 graczy w grze.
 	 * Dane wyprowadzamy do pliku. 
-	 * TODO : STM - czytanie z utworzonych plików
 	 */
 	
 	public static void findPlayersInGameDetails(ArrayList<Team> teams, String key1, String key2) throws MalformedURLException, IOException, JSONException{
@@ -214,8 +213,8 @@ public class lolServerConnector {
 		 *  
 		 */
 		
-		File team1 = new File("C:/Users/Erwin/Desktop/webAPI/data/team1.in");
-		File team2 = new File("C:/Users/Erwin/Desktop/webAPI/data/team2.in");
+		File team1 = new File("C:/Users/Erwin/Desktop/STeamAPIdisplay/data/team1.in");
+		File team2 = new File("C:/Users/Erwin/Desktop/STeamAPIdisplay/data/team2.in");
 		team1.delete();
 		team2.delete();
 		File team = team1;
@@ -227,7 +226,6 @@ public class lolServerConnector {
 			
 			for (Player p : t.getPlayers()){
 			Player temp = p;
-			System.out.println( findUserDetailsByID(temp.getPlayerID(), temp.getPlayerNickname(), key));
 			
 			try {
 			    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(team, true)));
@@ -253,7 +251,7 @@ public class lolServerConnector {
 	
 	
 	
-	public static void main(String[] args) throws MalformedURLException, IOException, JSONException   {
+	public static void main(String[] args) throws Exception   {
 
 		Player player;
 		ArrayList<Team> teams = new ArrayList<Team>();
@@ -264,8 +262,13 @@ public class lolServerConnector {
 		
 
 		
-		File conf1 = new File("C:/Users/Erwin/Desktop/webAPI/data/key1.conf");
-		File conf2 = new File("C:/Users/Erwin/Desktop/webAPI/data/key2.conf");
+		File conf1 = new File("C:/Users/Erwin/Desktop/STeamAPIdisplay/data/key1.conf");
+		File conf2 = new File("C:/Users/Erwin/Desktop/STeamAPIdisplay/data/key2.conf");
+		
+		
+		File team1 = new File("C:/Users/Erwin/Desktop/STeamAPIdisplay/data/team1.in");
+		File team2 = new File("C:/Users/Erwin/Desktop/STeamAPIdisplay/data/team2.in");
+		
 		
 		Scanner in = new Scanner(new FileReader(conf1));
 		while (in.hasNext()) key1 = in.nextLine();
@@ -279,22 +282,35 @@ public class lolServerConnector {
 			while(true){
 			
 					
-				//	GraphicalInterface gui = new GraphicalInterface();
 						
-							player = findUserID(key1);
-							
-						//	System.out.println(player.getPlayerNickname()+"  lvl: " +player.getPlayerLevel()+"  ID: "+player.getPlayerID());
-							
-						//	System.out.println(findUserDetailsByID(player.getPlayerID(),player.getPlayerNickname(), key2));
-							
+							player = findUserID(key1);							
+						
 							teams = findCurrentGameDetails(player.getPlayerID(),key1);
 							
 							findPlayersInGameDetails(teams,key1,key2);
 			
+							new JavaMicrocontrollerCommunicator().connect("COM5");  
 							
 							
+							BufferedReader br = new BufferedReader(new FileReader(team1));
+							try {
+							    StringBuilder sb = new StringBuilder();
+							    String line = br.readLine();
+							    CommPortSender.send(new ProtocolImpl().getMessage(line));  
+							    
+							   for (int i = 0; i <=3; i++) {
+							        sb.append(line);
+							        sb.append(System.lineSeparator());
+							        line = br.readLine();
+							        CommPortSender.send(new ProtocolImpl().getMessage(line));  
+							    }
+							    String everything = sb.toString();
+							} finally {
+							    br.close();
+							}			
 							
 							
+														
 							/* 		id -  49950320  - do testów		 	*/						
 							
 					

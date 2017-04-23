@@ -66,7 +66,7 @@ int main(void)
 	/* Initialize display */
 	PCD8544_Init(0x38);
 
-	static int x = 4;
+	static int x = 8;
 
 	while (1)
 	{
@@ -94,44 +94,12 @@ int main(void)
 
 
 
-		/* Blink the orange LED at 1Hz */
-		if (500 == ticker)
-		{
-			GPIOD->BSRRH = GPIO_Pin_13;
-		}
-		else if (1000 == ticker)
-		{
-			ticker = 0;
-			GPIOD->BSRRL = GPIO_Pin_13;
-		}
-
-
-		/* If there's data on the virtual serial port:
-		 *  - Echo it back
-		 *  - Turn the green LED on for 10ms
-		 */
 
 		char * buffer;
 
-/*
-		if (VCP_get_char(&byte))
-		{
-			VCP_put_char(byte);
-			PCD8544_GotoXY(x, 3);
-			PCD8544_Puts(byte, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-			x++;
-			GPIOD->BSRRL = GPIO_Pin_12;
-			downTicker = 10;
-		}
-		if (0 == downTicker)
-		{
-			GPIOD->BSRRH = GPIO_Pin_12;
-		}
-*/
-
 		if (VCP_get_string(&buffer)){
 			PCD8544_GotoXY(0, x);
-			PCD8544_Puts(&buffer, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+			PCD8544_Puts(&buffer, PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
 			x += 8;
 
 		}
@@ -175,12 +143,6 @@ void init()
 	return;
 }
 
-/*
- * Call this to indicate a failure.  Blinks the STM32F4 discovery LEDs
- * in sequence.  At 168Mhz, the blinking will be very fast - about 5 Hz.
- * Keep that in mind when debugging, knowing the clock speed might help
- * with debugging.
- */
 void ColorfulRingOfDeath(void)
 {
 	uint16_t ring = 1;
