@@ -35,3 +35,6 @@
 *.elf
 *.hex
 *.map
+*.coproj
+*.cogui
+*.comarker
