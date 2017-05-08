@@ -12,7 +12,7 @@ import org.json.*;
 
 
 
-public class lolServerConnector {
+public class RiotAPIManager {
 
 
 	/*
@@ -62,7 +62,7 @@ public class lolServerConnector {
 	
 	
 	/*
-	 * zapytanie do API o część, która ma się pojawić na wyświetlaczu -
+	 * zapytanie do API o czę?�ć, kt??ra ma się pojawić na wy?�wietlaczu -
 	 * tworzy dane [ nick gracza - dywizja ]
 	 */
 	
@@ -73,8 +73,8 @@ public class lolServerConnector {
 		int playerID = ID;
 		String charset = "UTF-8";  
 				
-		String tier="";
-		String division="";
+		String tier="-";
+		String division="-";
 		
 		URLConnection connection = new URL(serverLink + playerID+ "/entry" + "?" + APIkey).openConnection();
 		connection.setRequestProperty("Accept-Charset", charset);
@@ -84,11 +84,11 @@ public class lolServerConnector {
 		    String responseBody = scanner.useDelimiter("\\A").next();
 		    
 		    
-			JSONObject obj = new JSONObject(responseBody);						  					    						    
-	
+			JSONObject obj = new JSONObject(responseBody);						  					    						    			
+			JSONArray arr = obj.getJSONArray((Integer.toString(ID)));
 			
-			   JSONArray arr = obj.getJSONArray((Integer.toString(ID)));
-			  
+			try{
+			
 			   for (int i = 0; i < arr.length(); i++)
 			   {
 				   if( arr.getJSONObject(i).getString("queue").equals("RANKED_SOLO_5x5")){
@@ -102,25 +102,34 @@ public class lolServerConnector {
 				       for (int j = 0; j < jsonarray1.length(); j++) {
 				   division = jsonarray1.getJSONObject(j).getString("division");
 				     } 
-			   }
-				     
 				   
+				   }
+				    
 				   
 					   								   
 			   }
-		
-		}
+			
+			}
+			catch(Exception e){
 				
+				
+					tier = "UNRANKED";
+					division = "";
+					
+				 return nick +" " + tier +" "+ division;	
+			}
+			
+			
 		  return nick +" " + tier +" "+ division;			
 	}
-						
+}
 	
 
 	
 	
 	/*
-	 * zapytanie, które znajduje inforamacje o wszystkich graczach, którzy są aktualnie w danej grze
-	 * tworzy listę Team: 2 drużyny 5-osobowe
+	 * zapytanie, kt??re znajduje inforamacje o wszystkich graczach, kt??rzy są aktualnie w danej grze
+	 * tworzy listę Team: 2 dru??yny 5-osobowe
 	 */
 	
 	
@@ -196,8 +205,8 @@ public class lolServerConnector {
 	
 	
 	/*
-	 * Funkcja, która przetwarza dane uzyskane poprzez findCurrentGameDetails().
-	 * Każdy gracz na liście jest sprawdzany przez funkcję findUserDetailsByID().
+	 * Funkcja, kt??ra przetwarza dane uzyskane poprzez findCurrentGameDetails().
+	 * Ka??dy gracz na li?�cie jest sprawdzany przez funkcję findUserDetailsByID().
 	 * Uzyskujemy dane [ nick gracza - dywizja ] dla wszystkich 10 graczy w grze.
 	 * Dane wyprowadzamy do pliku. 
 	 */
@@ -209,12 +218,12 @@ public class lolServerConnector {
 		
 
 		/* TODO: 
-		 * zmiana ścieżek - dopasowanie do katalogów projektu, a nie lokalnego komputera
+		 * zmiana ?�cie??ek - dopasowanie do katalog??w projektu, a nie lokalnego komputera
 		 *  
 		 */
 		
-		File team1 = new File("C:/Users/Erwin/Desktop/STeamAPIdisplay/data/team1.in");
-		File team2 = new File("C:/Users/Erwin/Desktop/STeamAPIdisplay/data/team2.in");
+		File team1 = new File("data/team1.in");
+		File team2 = new File("data/team2.in");
 		team1.delete();
 		team2.delete();
 		File team = team1;
@@ -251,74 +260,11 @@ public class lolServerConnector {
 	
 	
 	
-	public static void main(String[] args) throws Exception   {
-
-		Player player;
-		ArrayList<Team> teams = new ArrayList<Team>();
-		
-		String key1 = "";
-		String key2 = "";		
-		
-		
-
-		
-		File conf1 = new File("C:/Users/Erwin/Desktop/STeamAPIdisplay/data/key1.conf");
-		File conf2 = new File("C:/Users/Erwin/Desktop/STeamAPIdisplay/data/key2.conf");
-		
-		
-		File team1 = new File("C:/Users/Erwin/Desktop/STeamAPIdisplay/data/team1.in");
-		File team2 = new File("C:/Users/Erwin/Desktop/STeamAPIdisplay/data/team2.in");
-		
-		
-		Scanner in = new Scanner(new FileReader(conf1));
-		while (in.hasNext()) key1 = in.nextLine();
-		
-		in = new Scanner(new FileReader(conf2));
-		while (in.hasNext()) key2 = in.nextLine();
-		
-		
-		
-		
-			while(true){
-			
-					
-						
-							player = findUserID(key1);							
-						
-							teams = findCurrentGameDetails(player.getPlayerID(),key1);
-							
-							findPlayersInGameDetails(teams,key1,key2);
-			
-							new JavaMicrocontrollerCommunicator().connect("COM5");  
-							
-							
-							BufferedReader br = new BufferedReader(new FileReader(team1));
-							try {
-							    StringBuilder sb = new StringBuilder();
-							    String line = br.readLine();
-							    CommPortSender.send(new ProtocolImpl().getMessage(line));  
-							    
-							   for (int i = 0; i <=3; i++) {
-							        sb.append(line);
-							        sb.append(System.lineSeparator());
-							        line = br.readLine();
-							        CommPortSender.send(new ProtocolImpl().getMessage(line));  
-							    }
-							    String everything = sb.toString();
-							} finally {
-							    br.close();
-							}			
-							
-							
-														
-							/* 		id -  49950320  - do testów		 	*/						
-							
-					
-							
-			}
-			
-			
-		}
+	
 
 
 }
+
+ 
+		
+		/* 		id -  49950320  - do test??w		 	*/	
