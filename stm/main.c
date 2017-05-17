@@ -64,51 +64,139 @@ int main(void)
 	init();
 
 	/* Initialize display */
-	PCD8544_Init(0x38);
+	PCD8544_Init(0x39);
+	PCD8544_Clear();
 
-	static int x = 8;
+	static int iterator = 0;
+ 	static int x = 4;
+ 	static int y = 5;
+
+	char * buffer;
+
+
+
+	struct linia{
+	 		 char value[10];
+	 		 int x;
+	 		 int y;
+	 		 int flag;
+	 	} line1, line2, line3;
+
+	 	line1.flag = 0;
+	 	line2.flag = 0;
+	 	line3.flag = 0;
+
 
 	while (1)
 	{
+		PCD8544_Clear();
 
 
-/*
-		PCD8544_GotoXY(0, 3);
-		PCD8544_Puts("LeagueofLegends", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-		PCD8544_GotoXY(0, 12);
-		PCD8544_Puts("Gracz 1, SILVER V", PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
-		PCD8544_GotoXY(0, 18);
-		PCD8544_Puts("Gracz 2, GOLD IV", PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
-		PCD8544_GotoXY(0, 24);
-		PCD8544_Puts("Gracz 3, MASTER", PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
-		PCD8544_GotoXY(0, 30);
-		PCD8544_Puts("Gracz 4, UNRANKED", PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
-		PCD8544_GotoXY(0, 36);
-		PCD8544_Puts("Gracz 5, BRONZE VII", PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
-		PCD8544_GotoXY(0, 42);
-		PCD8544_Puts("MID OR FEED", PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
+
+
+		if (VCP_get_string(&buffer)){
+
+			switch(iterator){
+			case(0):{
+				strcpy(line1.value, &buffer);
+				line1.x = x;
+				line1.y = y;
+				line1.flag = 1;
+				iterator++;
+				x+=8;
+				break;
+				}
+			case(1):{
+
+				strcpy(line2.value, &buffer);
+				line2.y=y;
+				line2.x=x;
+				line2.flag=1;
+				x+=8;
+				iterator++;
+				break;
+				}
+			case(2):
+				{
+
+				strcpy(line3.value,&buffer);
+				line3.x=x;
+				line3.y=y;
+				line3.flag=1;
+				iterator++;
+				x+=8;
+				break;
+				}
+			}
+		}
+
+			if (line1.flag==1){
+			PCD8544_GotoXY(line1.y, line1.x);
+			PCD8544_Puts(line1.value, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+			}
+
+			if (line2.flag==1){
+			PCD8544_GotoXY(line2.y, line2.x);
+			PCD8544_Puts(line2.value, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+
+			if (line3.flag==1){
+			PCD8544_GotoXY(line3.y, line3.x);
+			PCD8544_Puts(line3.value, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+			}
+
+
+			/*
+			if (line1 != NULL){
+			PCD8544_GotoXY(y, x);
+			PCD8544_Puts(line1, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+			x += 7;
+			}
+
+			if (line2 != NULL){
+				PCD8544_GotoXY(y, x);
+				PCD8544_Puts(line2, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+				x += 7;
+				}
+
+			if (line3 != NULL){
+				PCD8544_GotoXY(y, x);
+				PCD8544_Puts(line3, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+				x += 7;
+				}
+
+
+			GPIO_SetBits(GPIOD,  GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15);
+			}
+
+		}
 */
 
 
 
-
-
-
-
-		char * buffer;
-
-		if (VCP_get_string(&buffer)){
-			PCD8544_GotoXY(0, x);
-			PCD8544_Puts(&buffer, PCD8544_Pixel_Set, PCD8544_FontSize_3x5);
-			x += 8;
-
-		}
-
 		/* refresh display */
 		PCD8544_Refresh();
+
+
+				}
 		}
 	return 0;
+
 }
+
+
+
+
+/*
+void displayText(){
+				PCD8544_GotoXY(1, x);
+				if (x <= 40) PCD8544_Puts(&buff[iterator], PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+				else 	{
+				PCD8544_Clear();
+				x = -3;
+				}
+				x += 8;
+}
+*/
 
 void init()
 {
