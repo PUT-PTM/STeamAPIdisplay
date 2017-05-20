@@ -67,136 +67,91 @@ int main(void)
 	PCD8544_Init(0x39);
 	PCD8544_Clear();
 
+	char znak;
+	char * buffer;
 	static int iterator = 0;
- 	static int x = 4;
+	static int page_nr = 0;
+	static int line_nr = 0;
+	static int x1 = 4;
+    static int x2 = 13;
+    static int x3 = 22;
  	static int y = 5;
 
-	char * buffer;
 
 
 
-	struct linia{
-	 		 char value[10];
-	 		 int x;
-	 		 int y;
+	struct page{
+	 		char value1[15];
+	 		char value2[15];
+	 		char value3[15];
 	 		 int flag;
-	 	} line1, line2, line3;
-
-	 	line1.flag = 0;
-	 	line2.flag = 0;
-	 	line3.flag = 0;
+	 		 int page_nr;
+	 	} line[12];
 
 
-	while (1)
-	{
-		PCD8544_Clear();
+	 int local_it;
+	 for (local_it = 0; local_it < 12; local_it++){
+		 line[local_it].flag = 0;
+	 }
 
 
-
+	 while(1){
 
 		if (VCP_get_string(&buffer)){
-
-			switch(iterator){
-			case(0):{
-				strcpy(line1.value, &buffer);
-				line1.x = x;
-				line1.y = y;
-				line1.flag = 1;
-				iterator++;
-				x+=8;
-				break;
+				switch(line_nr){
+					case(0):
+						{
+						strcpy(line[iterator].value1, &buffer);
+						line_nr++;
+						break;
+						}
+					case(1):{
+						strcpy(line[iterator].value2, &buffer);
+						line_nr++;
+						break;
+					}
+					case(2):{
+						strcpy(line[iterator].value3, &buffer);
+						line_nr=0;
+						page_nr++;
+						break;
+					}
 				}
-			case(1):{
 
-				strcpy(line2.value, &buffer);
-				line2.y=y;
-				line2.x=x;
-				line2.flag=1;
-				x+=8;
-				iterator++;
-				break;
-				}
-			case(2):
-				{
 
-				strcpy(line3.value,&buffer);
-				line3.x=x;
-				line3.y=y;
-				line3.flag=1;
+				line[iterator].flag = 1;
+				line[iterator].page_nr = page_nr;
+
+				page_nr++;
 				iterator++;
-				x+=8;
-				break;
-				}
-			}
 		}
 
-			if (line1.flag==1){
-			PCD8544_GotoXY(line1.y, line1.x);
-			PCD8544_Puts(line1.value, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+
+
+		for (local_it = 0; local_it <= 4; local_it++){
+			if (line[local_it].flag==1){
+				PCD8544_GotoXY(y, x1);
+				PCD8544_Puts(line[local_it].value1, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+				PCD8544_GotoXY(y, x2);
+				PCD8544_Puts(line[local_it].value2, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+				PCD8544_GotoXY(y, x3);
+				PCD8544_Puts(line[local_it].value3, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
 			}
 
-			if (line2.flag==1){
-			PCD8544_GotoXY(line2.y, line2.x);
-			PCD8544_Puts(line2.value, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-
-			if (line3.flag==1){
-			PCD8544_GotoXY(line3.y, line3.x);
-			PCD8544_Puts(line3.value, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-			}
 
 
-			/*
-			if (line1 != NULL){
-			PCD8544_GotoXY(y, x);
-			PCD8544_Puts(line1, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-			x += 7;
-			}
-
-			if (line2 != NULL){
-				PCD8544_GotoXY(y, x);
-				PCD8544_Puts(line2, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-				x += 7;
+				/* refresh display */
 				}
-
-			if (line3 != NULL){
-				PCD8544_GotoXY(y, x);
-				PCD8544_Puts(line3, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-				x += 7;
-				}
-
-
-			GPIO_SetBits(GPIOD,  GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15);
-			}
-
-		}
-*/
-
-
-
-		/* refresh display */
 		PCD8544_Refresh();
 
+	 }
 
-				}
-		}
+
 	return 0;
 
 }
 
 
-
-
-/*
-void displayText(){
-				PCD8544_GotoXY(1, x);
-				if (x <= 40) PCD8544_Puts(&buff[iterator], PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-				else 	{
-				PCD8544_Clear();
-				x = -3;
-				}
-				x += 8;
-}
-*/
 
 void init()
 {
