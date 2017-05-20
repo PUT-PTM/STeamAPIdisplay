@@ -38,3 +38,6 @@
 *.coproj
 *.cogui
 *.comarker
+
+
+*.metadata

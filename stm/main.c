@@ -160,6 +160,9 @@ int main(void)
 
 	 PCD8544_Clear();
 
+
+	 local_it = 0;
+
 	 while(1){
 
 
@@ -195,9 +198,7 @@ int main(void)
 		}
 
 
-
-
-				for (local_it = 0; local_it <= page_nr; local_it++){
+		for (local_it = 0; local_it <= 12; local_it++){
 
 					if (line[local_it].page_nr == page_display_iterator){
 						if (line[local_it].flag==1){
@@ -209,7 +210,8 @@ int main(void)
 							PCD8544_Puts(line[local_it].value3, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
 						}
 					}
-				}
+
+			}
 
 
 				/* refresh display */

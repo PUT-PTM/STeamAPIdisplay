@@ -66,7 +66,7 @@ public class RiotAPIManager {
 	 * tworzy dane [ nick gracza - dywizja ]
 	 */
 	
-	public static String findUserDetailsByID(int ID, String nick, String APIkey) throws MalformedURLException, IOException, JSONException{
+	public static String findUserDetailsByID(int ID, String nick, String APIkey) throws MalformedURLException, IOException{
 		
 		
 		String serverLink = "https://eune.api.pvp.net/api/lol/eune/v2.5/league/by-summoner/"; 
@@ -101,27 +101,24 @@ public class RiotAPIManager {
 				    
 				       for (int j = 0; j < jsonarray1.length(); j++) {
 				   division = jsonarray1.getJSONObject(j).getString("division");
-				     } 
-				   
-				   }
-				    
-				   
-					   								   
+				     } 				   
+				   }				   				   					   								   
 			   }
-			
+						
+					} catch (Exception e){
+							e.printStackTrace();
+				}
+		
+		}catch (JSONException e1) {
+		
+		tier = "UNRANKED";
+		division = "";
+		
+		return tier +" "+ division;	
 			}
-			catch(Exception e){
-				
-				
-					tier = "UNRANKED";
-					division = "";
-					
-				 return nick +" " + tier +" "+ division;	
-			}
-			
-			
-		  return nick +" " + tier +" "+ division;			
-	}
+		
+return tier +" "+ division;			
+
 }
 	
 
@@ -238,7 +235,10 @@ public class RiotAPIManager {
 			
 			try {
 			    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(team, true)));
+			    out.println(p.getPlayerNickname());
 			    out.println(findUserDetailsByID(temp.getPlayerID(), temp.getPlayerNickname(), key));
+			    if (t.getId() == 100) out.println("TEAM I");
+			    else out.println("TEAM II");
 			    out.close();
 			} catch (IOException e) {
 			    //exception handling left as an exercise for the reader

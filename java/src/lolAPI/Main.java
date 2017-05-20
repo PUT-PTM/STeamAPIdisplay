@@ -36,14 +36,22 @@ public static void main(String[] args) throws Exception   {
 		in = new Scanner(new FileReader(conf2));
 		while (in.hasNext()) key2 = in.nextLine();
  
+		new JavaMicrocontrollerCommunicator().connect("COM5"); 
+		 CommPortSender.send(new ProtocolImpl().getMessage("WELCOME"));  
+	     CommPortSender.send(new ProtocolImpl().getMessage("TO")); 
+	     CommPortSender.send(new ProtocolImpl().getMessage("LOL API")); 
+		
+		
 		
 			while(true){
 			
 
 				try {
-					new JavaMicrocontrollerCommunicator().connect("COM5"); 
-					
-					
+					// new JavaMicrocontrollerCommunicator().connect("COM5"); 
+			        
+		//	        CommPortSender.send(new ProtocolImpl().getMessage("TEKSTTEKST222xxxxx")); 
+			//        CommPortSender.send(new ProtocolImpl().getMessage("TEKSTTEKST22x")); 
+
 					
 					//  <===> STEAM API
 					
@@ -73,6 +81,11 @@ public static void main(String[] args) throws Exception   {
 						player = RiotAPIManager.findUserID(key1);							
 						String res = RiotAPIManager.findUserDetailsByID(player.getPlayerID(), player.getPlayerNickname(), key2);
 						
+					
+					//	CommPortSender.send(new ProtocolImpl().getMessage(player.getPlayerNickname()));
+					//	CommPortSender.send(new ProtocolImpl().getMessage(res));  
+					//	System.out.println("HERE  "+res);
+						
 						try {
 							teams = RiotAPIManager.findCurrentGameDetails(player.getPlayerID(),key1);
 						
@@ -81,18 +94,28 @@ public static void main(String[] args) throws Exception   {
 						
 						
 									BufferedReader br = new BufferedReader(new FileReader(team1));
-									
+									BufferedReader br2 = new BufferedReader(new FileReader(team2));
+
 									try {
 									    StringBuilder sb = new StringBuilder();
 									    String line = br.readLine();
 									    CommPortSender.send(new ProtocolImpl().getMessage(line));  
 									    
-									   for (int i = 0; i <=3; i++) {
+									   for (int i = 0; i <=13; i++) {
 									        sb.append(line);
 									        sb.append(System.lineSeparator());
 									        line = br.readLine();
 									        CommPortSender.send(new ProtocolImpl().getMessage(line));  
 									    }
+									   
+									   for (int i = 0; i <=13; i++) {
+									        sb.append(line);
+									        sb.append(System.lineSeparator());
+									        line = br2.readLine();
+									        CommPortSender.send(new ProtocolImpl().getMessage(line));  
+									    }
+									   
+									   
 									    String everything = sb.toString();
 									} finally {
 									    br.close();
