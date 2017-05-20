@@ -17,6 +17,21 @@
 
 
 
+
+
+
+
+
+
+// obs³uga timera
+// 		***	PCD8544_Clear();
+//		*** page_display_iterator++;
+//		*** if ( page_display_iterator > page_nr)  page_display_iterator = 0;
+
+
+
+
+
 volatile uint32_t ticker, downTicker;
 
 /*
@@ -70,20 +85,21 @@ int main(void)
 	char znak;
 	char * buffer;
 	static int iterator = 0;
+	static int page_display_iterator = 0;
 	static int page_nr = 0;
 	static int line_nr = 0;
 	static int x1 = 4;
     static int x2 = 13;
     static int x3 = 22;
- 	static int y = 5;
+ 	static int y = 1;
 
 
 
 
 	struct page{
-	 		char value1[15];
-	 		char value2[15];
-	 		char value3[15];
+	 		char value1[14];
+	 		char value2[14];
+	 		char value3[14];
 	 		 int flag;
 	 		 int page_nr;
 	 	} line[12];
@@ -92,15 +108,26 @@ int main(void)
 	 int local_it;
 	 for (local_it = 0; local_it < 12; local_it++){
 		 line[local_it].flag = 0;
+		 int clear;
+		 for (clear = 0; clear < 14; clear++){
+			line[local_it].value1[clear] = 0;
+			line[local_it].value2[clear] = 0;
+			line[local_it].value3[clear] = 0;
+		 }
+
 	 }
 
 
 	 while(1){
 
+
+
+
 		if (VCP_get_string(&buffer)){
 				switch(line_nr){
 					case(0):
 						{
+
 						strcpy(line[iterator].value1, &buffer);
 						line_nr++;
 						break;
@@ -113,6 +140,7 @@ int main(void)
 					case(2):{
 						strcpy(line[iterator].value3, &buffer);
 						line_nr=0;
+						line[iterator].page_nr = page_nr;
 						page_nr++;
 						break;
 					}
@@ -120,31 +148,35 @@ int main(void)
 
 
 				line[iterator].flag = 1;
-				line[iterator].page_nr = page_nr;
 
-				page_nr++;
 				iterator++;
 		}
 
 
 
-		for (local_it = 0; local_it <= 4; local_it++){
-			if (line[local_it].flag==1){
-				PCD8544_GotoXY(y, x1);
-				PCD8544_Puts(line[local_it].value1, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-				PCD8544_GotoXY(y, x2);
-				PCD8544_Puts(line[local_it].value2, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-				PCD8544_GotoXY(y, x3);
-				PCD8544_Puts(line[local_it].value3, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-			}
 
+				for (local_it = 0; local_it <= iterator; local_it++){
+
+					if (line[local_it].page_nr == page_display_iterator){
+						if (line[local_it].flag==1){
+							PCD8544_GotoXY(y, x1);
+							PCD8544_Puts(line[local_it].value1, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+							PCD8544_GotoXY(y, x2);
+							PCD8544_Puts(line[local_it].value2, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+							PCD8544_GotoXY(y, x3);
+							PCD8544_Puts(line[local_it].value3, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+						}
+					}
+				}
 
 
 				/* refresh display */
-				}
-		PCD8544_Refresh();
 
+
+
+		PCD8544_Refresh();
 	 }
+
 
 
 	return 0;
