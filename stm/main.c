@@ -4,6 +4,7 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_gpio.h"
 #include "stm32f4xx_rcc.h"
+#include "stm32f4xx_tim.h"
 #include "stm32f4xx_exti.h"
 #include "stm32f4xx_spi.h"
 #include "usbd_cdc_core.h"
@@ -14,7 +15,7 @@
 #include "tm_stm32f4_gpio.h"
 #include "tm_stm32f4_pcd8544.h"
 #include "tm_stm32f4_spi.h"
-
+#include "misc.h"
 
 
 
@@ -69,6 +70,25 @@ void OTG_FS_WKUP_IRQHandler(void);
 #endif
 
 
+static int page_nr;
+static int page_display_iterator;
+
+
+
+ void TIM2_IRQHandler(void)
+ {
+          	if(TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
+          	{
+          		GPIO_ToggleBits(GPIOD, GPIO_Pin_13);
+          		PCD8544_Clear();
+          		page_display_iterator++;
+          		if ( page_display_iterator >= page_nr) page_display_iterator = 0;
+
+                 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+          	}
+ }
+
+
 
 int main(void)
 {
@@ -84,9 +104,8 @@ int main(void)
 
 	char znak;
 	char * buffer;
-	static int iterator = 0;
-	static int page_display_iterator = 0;
-	static int page_nr = 0;
+	page_display_iterator = 0;
+	page_nr = 0;
 	static int line_nr = 0;
 	static int x1 = 4;
     static int x2 = 13;
@@ -118,6 +137,29 @@ int main(void)
 	 }
 
 
+	 RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+	 TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	 TIM_TimeBaseStructure.TIM_Period = 25199;
+	 TIM_TimeBaseStructure.TIM_Prescaler = 9999;
+	 TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+	 TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	 TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
+	 TIM_Cmd(TIM2, ENABLE);
+
+
+
+	 NVIC_InitTypeDef NVIC_InitStructure;
+	 NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
+	 NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;
+	 NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
+	 NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	 NVIC_Init(&NVIC_InitStructure);
+
+	 TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+	 TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
+
+	 PCD8544_Clear();
+
 	 while(1){
 
 
@@ -128,34 +170,34 @@ int main(void)
 					case(0):
 						{
 
-						strcpy(line[iterator].value1, &buffer);
+						strcpy(line[page_nr].value1, &buffer);
 						line_nr++;
 						break;
 						}
 					case(1):{
-						strcpy(line[iterator].value2, &buffer);
+						strcpy(line[page_nr].value2, &buffer);
 						line_nr++;
 						break;
 					}
 					case(2):{
-						strcpy(line[iterator].value3, &buffer);
+						strcpy(line[page_nr].value3, &buffer);
 						line_nr=0;
-						line[iterator].page_nr = page_nr;
+						line[page_nr].page_nr = page_nr;
 						page_nr++;
+						line[page_nr].flag = 1;
 						break;
 					}
 				}
 
 
-				line[iterator].flag = 1;
 
-				iterator++;
+
 		}
 
 
 
 
-				for (local_it = 0; local_it <= iterator; local_it++){
+				for (local_it = 0; local_it <= page_nr; local_it++){
 
 					if (line[local_it].page_nr == page_display_iterator){
 						if (line[local_it].flag==1){
@@ -182,6 +224,9 @@ int main(void)
 	return 0;
 
 }
+
+
+
 
 
 
