@@ -32,12 +32,9 @@
 *.pbxproj
 *.xml
 *.bin
-*.elf
 *.hex
 *.map
-*.coproj
-*.cogui
-*.comarker
+
 
 
 *.metadata
