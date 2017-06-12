@@ -33,9 +33,9 @@ GND   <->		GND	</br>
   Select class Main and run it.
 
 ## Attributons
- https://github.com/xenovacivus/STM32DiscoveryVCP
- https://stm32f4-discovery.net/pcd8544-nokia-33105110-lcd-stm32f429-discovery-library/
- http://rxtx.qbang.org/wiki/index.php/Main_Page
+ https://github.com/xenovacivus/STM32DiscoveryVCP </br>
+ https://stm32f4-discovery.net/pcd8544-nokia-33105110-lcd-stm32f429-discovery-library/ </br>
+ http://rxtx.qbang.org/wiki/index.php/Main_Page </br>
  
  MIT License
  
