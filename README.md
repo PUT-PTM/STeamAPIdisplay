@@ -17,12 +17,12 @@ Display handle is driven by SPI and based on libraries by Tilen Majerle (link be
 
 ## Connections
 RES   <->	  PC15	</br>
-SCE	  <->	  PC13	
-DC	  <->	  PC14	
-D/IN  <->	  PC3	
-CLK   <->	  PB10	
-+V    <->		3.3V		
-GND   <->		GND	
+SCE	  <->	  PC13	</br>
+DC	  <->	  PC14	</br>
+D/IN  <->	  PC3	</br>
+CLK   <->	  PB10	</br>
++V    <->		3.3V		</br>
+GND   <->		GND	</br>
 
 ## How to compile
   Open and build file stm/STM32DiscoveryVCP.coproj via CooCox IDE.
