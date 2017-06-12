@@ -1,4 +1,4 @@
-package lolAPI;
+package api;
 
 import java.io.*;
 import java.net.*;
@@ -6,7 +6,7 @@ import java.nio.file.*;
 import java.io.*;
 import java.util.*;
 import org.json.*;
-
+import java.text.Normalizer;
 
  
 
@@ -49,6 +49,7 @@ public class RiotAPIManager {
 						  /*  System.out.println(responseBody);		*/
 						    JSONObject obj = new JSONObject(responseBody);
 						    Player player = new Player();
+				
 						    player.setPlayerNickname(obj.getJSONObject(playerNickname).getString("name"));
 						    player.setPlayerID(obj.getJSONObject(playerNickname).getInt("id"));
 						    player.setLevel( obj.getJSONObject(playerNickname).getInt("summonerLevel") ); 
@@ -62,7 +63,7 @@ public class RiotAPIManager {
 	
 	
 	/*
-	 * zapytanie do API o czÄ™?›Ä‡, kt??ra ma siÄ™ pojawiÄ‡ na wy?›wietlaczu -
+	 * zapytanie do API o czê?sæ, ktora ma siê pojawiæ na wyswietlaczu -
 	 * tworzy dane [ nick gracza - dywizja ]
 	 */
 	
@@ -125,8 +126,8 @@ return tier +" "+ division;
 	
 	
 	/*
-	 * zapytanie, kt??re znajduje inforamacje o wszystkich graczach, kt??rzy sÄ… aktualnie w danej grze
-	 * tworzy listÄ™ Team: 2 dru??yny 5-osobowe
+	 * zapytanie, ktore znajduje inforamacje o wszystkich graczach, ktorzy s¹ aktualnie w danej grze
+	 * tworzy listê Team: 2 druzyny 5-osobowe
 	 */
 	
 	
@@ -170,8 +171,11 @@ return tier +" "+ division;
 			 int teamID = jobj.getInt("teamId");
 			 int playerNR = jobj.getInt("summonerId");
 			 String playerName = jobj.getString("summonerName");
-
-
+			 String norm = Normalizer.normalize(playerName, Normalizer.Form.NFD);
+			 norm = norm.replaceAll("[^\\p{ASCII}]", "");
+			 System.out.println(norm);
+			 playerName="";
+			 playerName=norm;
 			 
 			 if (teamID == 100){
 			
@@ -202,8 +206,8 @@ return tier +" "+ division;
 	
 	
 	/*
-	 * Funkcja, kt??ra przetwarza dane uzyskane poprzez findCurrentGameDetails().
-	 * Ka??dy gracz na li?›cie jest sprawdzany przez funkcjÄ™ findUserDetailsByID().
+	 * Funkcja, ktora przetwarza dane uzyskane poprzez findCurrentGameDetails().
+	 * Kazdy gracz na liscie jest sprawdzany przez funkcjê findUserDetailsByID().
 	 * Uzyskujemy dane [ nick gracza - dywizja ] dla wszystkich 10 graczy w grze.
 	 * Dane wyprowadzamy do pliku. 
 	 */
@@ -214,10 +218,6 @@ return tier +" "+ division;
 		String key = key1;
 		
 
-		/* TODO: 
-		 * zmiana ?›cie??ek - dopasowanie do katalog??w projektu, a nie lokalnego komputera
-		 *  
-		 */
 		
 		File team1 = new File("data/team1.in");
 		File team2 = new File("data/team2.in");
@@ -264,7 +264,3 @@ return tier +" "+ division;
 
 
 }
-
- 
-		
-		/* 		id -  49950320  - do test??w		 	*/	

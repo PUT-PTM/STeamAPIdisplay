@@ -1,4 +1,4 @@
-package lolAPI;
+package api;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,10 +36,10 @@ public static void main(String[] args) throws Exception   {
 		in = new Scanner(new FileReader(conf2));
 		while (in.hasNext()) key2 = in.nextLine();
  
-		new JavaMicrocontrollerCommunicator().connect("COM5"); 
-		 CommPortSender.send(new ProtocolImpl().getMessage("WELCOME"));  
-	     CommPortSender.send(new ProtocolImpl().getMessage("TO")); 
-	     CommPortSender.send(new ProtocolImpl().getMessage("LOL API")); 
+		new JavaMicrocontrollerCommunicator().connect("COM3"); 
+		 CommPortSender.send(new ProtocolImpl().getMessage("   WELCOME"));  
+	     CommPortSender.send(new ProtocolImpl().getMessage("     TO")); 
+	     CommPortSender.send(new ProtocolImpl().getMessage("   LOL API")); 
 		
 		
 		
@@ -47,14 +47,11 @@ public static void main(String[] args) throws Exception   {
 			
 
 				try {
-					// new JavaMicrocontrollerCommunicator().connect("COM5"); 
-			        
-		//	        CommPortSender.send(new ProtocolImpl().getMessage("TEKSTTEKST222xxxxx")); 
-			//        CommPortSender.send(new ProtocolImpl().getMessage("TEKSTTEKST22x")); 
+
 
 					
 					//  <===> STEAM API
-					
+					/*
 					
 					ArrayList<Gamer> friendlist = new ArrayList<Gamer>();	
 					
@@ -71,7 +68,7 @@ public static void main(String[] args) throws Exception   {
 						}
 					}
 
-					
+					*/
 					
 					// 		<===>  RIOT GAMES API
 					
@@ -108,11 +105,15 @@ public static void main(String[] args) throws Exception   {
 									        CommPortSender.send(new ProtocolImpl().getMessage(line));  
 									    }
 									   
+									   
+									    String line2 = br2.readLine();
+								        CommPortSender.send(new ProtocolImpl().getMessage(line2));  
+
 									   for (int i = 0; i <=13; i++) {
 									        sb.append(line);
 									        sb.append(System.lineSeparator());
-									        line = br2.readLine();
-									        CommPortSender.send(new ProtocolImpl().getMessage(line));  
+									        line2 = br2.readLine();
+									        CommPortSender.send(new ProtocolImpl().getMessage(line2));  
 									    }
 									   
 									   
@@ -122,7 +123,8 @@ public static void main(String[] args) throws Exception   {
 									}			
 								}
 						catch (Exception e){
-						    CommPortSender.send(new ProtocolImpl().getMessage(res + "\nGracz offline."));  
+						    CommPortSender.send(new ProtocolImpl().getMessage(player.getPlayerNickname()));  
+							CommPortSender.send(new ProtocolImpl().getMessage(res + "\nGracz offline."));  
 
 						}
 						

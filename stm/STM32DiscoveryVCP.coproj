@@ -85,8 +85,8 @@
     <File name="cmsis_lib/source/stm32f4xx_gpio.c" path="cmsis_lib/source/stm32f4xx_gpio.c" type="1"/>
     <File name="usb_lib/otg/usb_regs.h" path="usb_lib/otg/usb_regs.h" type="1"/>
     <File name="cmsis_lib/source/stm32f4xx_usart.c" path="cmsis_lib/source/stm32f4xx_usart.c" type="1"/>
-    <File name="usb_lib/cdc" path="" type="2"/>
     <File name="usb_lib/core/usbd_req.c" path="usb_lib/core/usbd_req.c" type="1"/>
+    <File name="usb_lib/cdc" path="" type="2"/>
     <File name="usb_lib/otg/usb_defines.h" path="usb_lib/otg/usb_defines.h" type="1"/>
     <File name="cmsis_lib/source/tm_stm32f4_pcd8544.c" path="cmsis_lib/source/tm_stm32f4_pcd8544.c" type="1"/>
     <File name="usb_lib/cdc/usbd_cdc_vcp.c" path="usb_lib/cdc/usbd_cdc_vcp.c" type="1"/>
@@ -96,8 +96,8 @@
     <File name="usb_lib/otg/usb_dcd_int.c" path="usb_lib/otg/usb_dcd_int.c" type="1"/>
     <File name="cmsis_lib/include/defines.h" path="cmsis_lib/include/defines.h" type="1"/>
     <File name="usb_conf/usb_bsp.c" path="usb_conf/usb_bsp.c" type="1"/>
-    <File name="cmsis_boot/startup" path="" type="2"/>
     <File name="cmsis/core_cm4_simd.h" path="cmsis/core_cm4_simd.h" type="1"/>
+    <File name="cmsis_boot/startup" path="" type="2"/>
     <File name="cmsis_boot/stm32f4xx.h" path="cmsis_boot/stm32f4xx.h" type="1"/>
     <File name="cmsis_lib/source/stm32f4xx_spi.c" path="cmsis_lib/source/stm32f4xx_spi.c" type="1"/>
     <File name="usb_conf/usbd_conf.h" path="usb_conf/usbd_conf.h" type="1"/>

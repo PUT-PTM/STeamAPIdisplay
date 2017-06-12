@@ -17,29 +17,14 @@
 #include "tm_stm32f4_spi.h"
 #include "misc.h"
 
-static int page_nr;
-static int page_display_iterator;
-char znak;
-char *buffer;
-static int line_nr = 0;
-static int x1 = 4;
-static int x2 = 13;
-static int x3 = 22;
-static int y = 1;
-int local_it;
-struct page{
-	 		char value1[14];
-	 		char value2[14];
-	 		char value3[14];
-	 		 int flag;
-	 		 int page_nr;
-	 	} line[12];
 
 
 
 
 
-// obs³uga timera
+
+
+// obsÂ³uga timera
 // 		***	PCD8544_Clear();
 //		*** page_display_iterator++;
 //		*** if ( page_display_iterator > page_nr)  page_display_iterator = 0;
@@ -85,17 +70,18 @@ void OTG_FS_WKUP_IRQHandler(void);
 #endif
 
 
+static int page_nr;
+static int page_display_iterator;
 
 
 
-/*  zmiana wywietlanej strony    */
  void TIM2_IRQHandler(void)
  {
           	if(TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
           	{
           		GPIO_ToggleBits(GPIOD, GPIO_Pin_13);
+          		PCD8544_Clear();
           		page_display_iterator++;
-
           		if ( page_display_iterator >= page_nr) page_display_iterator = 0;
 
                  	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
@@ -103,43 +89,6 @@ void OTG_FS_WKUP_IRQHandler(void);
  }
 
 
-/* czyszczenie wywietlacza   */
- void TIM4_IRQHandler(void)
- {
-          	if(TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET)
-          	{
-          		PCD8544_Clear();
-          		GPIO_ToggleBits(GPIOD, GPIO_Pin_14);
-
-                 	TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
-          	}
- }
-
-
- /* przeszukiwanie tablicy  */
- void TIM3_IRQHandler(void)
-  {
-           	if(TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
-           	{
-           		GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
-           		for (local_it = 0; local_it <= 12; local_it++){
-
-           		          			if (line[local_it].page_nr == page_display_iterator){
-           		          		          	if (line[local_it].flag==1){
-           		          		          			PCD8544_GotoXY(y, x1);
-           		          		          		  	PCD8544_Puts(line[local_it].value1, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-           		          		          		  	PCD8544_GotoXY(y, x2);
-           		          		          		   	PCD8544_Puts(line[local_it].value2, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-           		          		          		  	PCD8544_GotoXY(y, x3);
-           		          		          		    PCD8544_Puts(line[local_it].value3, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-           		          		          		        }
-           		          		          		   }
-
-           		          		          	}
-
-                  	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
-           	}
-  }
 
 int main(void)
 {
@@ -149,12 +98,33 @@ int main(void)
 	/* Initialize USB, IO, SysTick, and all those other things you do in the morning */
 	init();
 
+	/* Initialize display */
+	PCD8544_Init(0x39);
+	PCD8544_Clear();
 
+	char znak;
+	char * buffer;
 	page_display_iterator = 0;
 	page_nr = 0;
-	buffer = NULL;
+	static int line_nr = 0;
+	static int x1 = 4;
+    static int x2 = 13;
+    static int x3 = 22;
+ 	static int y = 1;
 
 
+
+
+	struct page{
+	 		char value1[14];
+	 		char value2[14];
+	 		char value3[14];
+	 		 int flag;
+	 		 int page_nr;
+	 	} line[12];
+
+
+	 int local_it;
 	 for (local_it = 0; local_it < 12; local_it++){
 		 line[local_it].flag = 0;
 		 int clear;
@@ -162,44 +132,20 @@ int main(void)
 			line[local_it].value1[clear] = 0;
 			line[local_it].value2[clear] = 0;
 			line[local_it].value3[clear] = 0;
-			line[local_it].page_nr = 0;
 		 }
-
 
 	 }
 
 
 	 RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-	 RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-	 RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
-
-
 	 TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	 TIM_TimeBaseStructure.TIM_Period = 25199;
 	 TIM_TimeBaseStructure.TIM_Prescaler = 9999;
 	 TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
 	 TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	 TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
-
-
-//839 period
-	 TIM_TimeBaseStructure.TIM_Period = 1639;
-	 TIM_TimeBaseStructure.TIM_Prescaler = 9999;
-	 TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-	 TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-	 TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
-
-	 TIM_TimeBaseStructure.TIM_Period = 100;
-	 TIM_TimeBaseStructure.TIM_Prescaler = 9999;
-	 TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-	 TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-	 TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
-
-
-
-	 TIM_Cmd(TIM4, ENABLE);
-	 TIM_Cmd(TIM3, ENABLE);
 	 TIM_Cmd(TIM2, ENABLE);
+
 
 
 	 NVIC_InitTypeDef NVIC_InitStructure;
@@ -209,33 +155,9 @@ int main(void)
 	 NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	 NVIC_Init(&NVIC_InitStructure);
 
-	 NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
-	 NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;
-	 NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
-	 NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	 NVIC_Init(&NVIC_InitStructure);
-
-
-	 NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
-	 NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;
-	 NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
-	 NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	 NVIC_Init(&NVIC_InitStructure);
-
 	 TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 	 TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
 
-	 TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
-	 TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
-
-	 TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
-	 TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
-
-
-
-
-	/* Initialize display */
-	 PCD8544_Init(0x39);
 	 PCD8544_Clear();
 
 
@@ -244,10 +166,13 @@ int main(void)
 	 while(1){
 
 
+
+
 		if (VCP_get_string(&buffer)){
 				switch(line_nr){
 					case(0):
 						{
+
 						strcpy(line[page_nr].value1, &buffer);
 						line_nr++;
 						break;
@@ -259,20 +184,34 @@ int main(void)
 					}
 					case(2):{
 						strcpy(line[page_nr].value3, &buffer);
-						line[page_nr].page_nr = page_nr;
-						line[page_nr].flag = 1;
-						page_nr++;
 						line_nr=0;
+						line[page_nr].page_nr = page_nr;
+						page_nr++;
+						line[page_nr].flag = 1;
 						break;
 					}
 				}
 
-				buffer = NULL;
+
 
 
 		}
 
 
+		for (local_it = 0; local_it <= 12; local_it++){
+
+					if (line[local_it].page_nr == page_display_iterator){
+						if (line[local_it].flag==1){
+							PCD8544_GotoXY(y, x1);
+							PCD8544_Puts(line[local_it].value1, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+							PCD8544_GotoXY(y, x2);
+							PCD8544_Puts(line[local_it].value2, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+							PCD8544_GotoXY(y, x3);
+							PCD8544_Puts(line[local_it].value3, PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+						}
+					}
+
+			}
 
 
 				/* refresh display */
