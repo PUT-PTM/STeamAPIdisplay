@@ -16,7 +16,7 @@ Display handle is driven by SPI and based on libraries by Tilen Majerle (link be
   CooCox IDE
 
 ## Connections
-RES   <->	  PC15	
+RES   <->	  PC15	</br>
 SCE	  <->	  PC13	
 DC	  <->	  PC14	
 D/IN  <->	  PC3	
