@@ -8,7 +8,7 @@ You just type in your nickname and data is shown on display.
 
 ## Description
 High-level part of this project is written in Java. Data is recived from server as JSON.
-After it'p processed, it's send by VCP to stm32. 
+After it is processed, it is send by VCP to stm32. 
 Display handle is driven by SPI and based on libraries by Tilen Majerle (link below).
 
 ## Tools
